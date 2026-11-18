@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f3f9e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>일본어 단어 퀴즈</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--bg:#f3f4fb;--surface:#fff;--surface2:#eceffa;--ink:#14183a;--muted:#5d6486;--line:#dfe3f2;--brand:#2f3f9e;--brand2:#6a5cff;--ok:#12b886;--bad:#f0506e;--grad:linear-gradient(135deg,#2f3f9e,#6a5cff 55%,#b06bff)}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0e22;--surface:#141937;--surface2:#1b2147;--ink:#eef0ff;--muted:#9aa3d0;--line:#262d5a}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:grid;place-items:start center;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+.app{width:min(440px,100%);margin-top:8px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.top h1{font-size:18px;font-weight:900;letter-spacing:-.02em;display:flex;gap:8px;align-items:center}
+.top h1 i{width:28px;height:28px;border-radius:9px;background:var(--grad);color:#fff;font-style:normal;display:grid;place-items:center;font-size:15px}
+.top a{font-size:13px;color:var(--muted);text-decoration:none}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:22px 20px;box-shadow:0 20px 50px -24px rgba(47,63,158,.4);position:relative;overflow:hidden;animation:in .5s both}
+@keyframes in{from{opacity:0;transform:translateY(16px)}}
+.hidden{display:none!important}
+.lv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 18px}
+.lv button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:16px 10px;font-family:inherit;cursor:pointer;transition:.2s;text-align:center}
+.lv button b{display:block;font-size:16px}.lv button small{color:var(--muted);font-size:12px}
+.lv button.on{border-color:var(--brand2);background:color-mix(in srgb,var(--brand2) 10%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--brand2) 18%,transparent)}
+.mode{display:flex;background:var(--surface2);border-radius:14px;padding:4px;margin-bottom:18px}
+.mode button{flex:1;border:0;background:none;padding:10px;border-radius:11px;font-family:inherit;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.mode button.on{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.btn{display:flex;justify-content:center;align-items:center;gap:6px;width:100%;border:0;border-radius:14px;padding:15px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;transition:.2s;background:var(--grad);color:#fff}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn.s{background:var(--surface2);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;margin-top:14px}
+.qtop{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:500;margin-bottom:8px}
+.pb{height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-bottom:10px}
+.pb i{display:block;height:100%;width:0;background:var(--grad);transition:width .5s}
+.word{text-align:center;font-family:'Zen Maru Gothic','Noto Sans JP',sans-serif;font-size:44px;font-weight:700;line-height:1.55;min-height:112px;padding-top:8px;word-break:keep-all}
+.word.long{font-size:26px}
+.word rt{font-size:13px;color:var(--muted);font-weight:500;opacity:0;transition:.3s}
+.word.show rt{opacity:1}
+.qt{text-align:center;font-size:13px;color:var(--muted);margin-bottom:14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.o{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:15px;padding:16px 8px;min-height:62px;font-family:inherit;font-size:15px;cursor:pointer;transition:.2s}
+.o.jp{font-family:'Zen Maru Gothic','Noto Sans JP';font-size:18px;font-weight:700}
+.o:hover:not(:disabled){border-color:var(--brand2);transform:translateY(-2px)}
+.o.ok{background:color-mix(in srgb,var(--ok) 18%,var(--surface));border-color:var(--ok);animation:pop .4s}
+.o.no{background:color-mix(in srgb,var(--bad) 15%,var(--surface));border-color:var(--bad);animation:shake .4s}
+@keyframes pop{50%{transform:scale(1.06)}}@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{margin-top:12px;border-radius:13px;padding:12px 14px;font-size:14px;min-height:46px;background:color-mix(in srgb,var(--ok) 16%,var(--surface));opacity:0;transform:translateY(8px);transition:.3s}
+.fb.show{opacity:1;transform:none}.fb.bad{background:color-mix(in srgb,var(--bad) 13%,var(--surface))}
+.fb ruby{font-family:'Zen Maru Gothic','Noto Sans JP';font-weight:700}
+.ring{width:140px;height:140px;margin:6px auto;position:relative}
+.ring svg{transform:rotate(-90deg)}.ring circle{fill:none;stroke-width:10;stroke-linecap:round}
+.ring .t{stroke:var(--surface2)}.ring .v{stroke:url(#g);stroke-dasharray:326.7;stroke-dashoffset:326.7;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.7,.2,1)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:900}
+.score{text-align:center}.score h2{font-size:38px;font-weight:900;letter-spacing:-.04em}.score h2 small{font-size:24px;color:var(--muted)}
+.score p{color:var(--muted);font-size:14px;margin:4px 0 14px}
+.wl{text-align:left;margin:14px 0}.wl h4{font-size:13px;color:var(--muted);margin-bottom:4px}
+.wl li{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;animation:in .5s both}
+.wl ruby{font-family:'Zen Maru Gothic','Noto Sans JP';font-weight:700;font-size:17px}.wl span{color:var(--muted)}
+.saved{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+.intro h2{font-size:24px;font-weight:900;letter-spacing:-.03em}.intro p{color:var(--muted);font-size:14px;margin-top:4px}
+.conf{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.conf i{position:absolute;top:-10px;width:8px;height:14px;border-radius:2px;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translateY(700px) rotate(540deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1><i>語</i>일본어 단어 퀴즈</h1><a href="index.html">← 구축 계획</a></div>
+
+  <div class="panel" id="home">
+    <div class="intro"><h2>오늘의 단어 10문제</h2><p>레벨과 방식을 고르고 시작하세요. 틀린 단어는 자동 저장됩니다.</p></div>
+    <div class="lv" id="lv">
+      <button data-l="N5" class="on"><b>초급</b><small>JLPT N5</small></button>
+      <button data-l="N4"><b>중급</b><small>N4~N3 · 업무·생활</small></button>
+    </div>
+    <div class="mode" id="mode">
+      <button data-m="meaning" class="on">뜻 맞히기</button>
+      <button data-m="word">단어 맞히기</button>
+    </div>
+    <button class="btn" id="start">시작하기</button>
+    <button class="btn s" id="myWrong" style="margin-top:10px">📒 저장된 틀린 단어 복습 <span id="wc"></span></button>
+    <div class="saved">홈 화면에 추가하면 앱처럼 사용할 수 있어요.</div>
+  </div>
+
+  <div class="panel hidden" id="quiz">
+    <div class="conf" id="conf"></div>
+    <div class="qtop"><span id="qn"></span><span id="sc"></span></div>
+    <div class="pb"><i id="bar"></i></div>
+    <div class="word" id="word"></div>
+    <div class="qt" id="qt"></div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb">&nbsp;</div>
+    <div class="row"><button class="btn s" id="speak">🔊 발음 듣기</button><button class="btn" id="next" disabled>다음 문제</button></div>
+  </div>
+
+  <div class="panel hidden" id="done">
+    <div class="conf" id="conf2"></div>
+    <div class="score">
+      <div class="ring"><svg viewBox="0 0 120 120" width="140" height="140"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#2f3f9e"/><stop offset="1" stop-color="#b06bff"/></linearGradient></defs><circle class="t" cx="60" cy="60" r="52"/><circle class="v" id="rv" cx="60" cy="60" r="52"/></svg><b id="pct">0%</b></div>
+      <h2><span id="fs">0</span><small> / <span id="ft">10</span></small></h2>
+      <p id="msg"></p>
+      <div class="wl" id="wl"></div>
+      <div class="row"><button class="btn s" id="again">다시 풀기</button><button class="btn" id="review">틀린 단어만 복습</button></div>
+      <button class="btn s" id="homeBtn" style="margin-top:10px">처음으로</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const W={
+N5:[['住所','じゅうしょ','주소'],['習慣','しゅうかん','습관'],['予約','よやく','예약'],['会社','かいしゃ','회사'],['電話','でんわ','전화'],['天気','てんき','날씨'],['勉強','べんきょう','공부'],['友達','ともだち','친구'],['食べ物','たべもの','음식'],['時間','じかん','시간'],['学校','がっこう','학교'],['買い物','かいもの','쇼핑'],['旅行','りょこう','여행'],['病院','びょういん','병원'],['駅','えき','역'],['朝','あさ','아침']],
+N4:[['通勤','つうきん','통근·출퇴근'],['珍しい','めずらしい','드물다'],['結局','けっきょく','결국'],['よろしくお願いします','よろしくおねがいします','잘 부탁드립니다'],['会議','かいぎ','회의'],['出張','しゅっちょう','출장'],['締め切り','しめきり','마감'],['資料','しりょう','자료'],['担当','たんとう','담당'],['確認','かくにん','확인'],['都合','つごう','사정·형편'],['急に','きゅうに','갑자기'],['相談','そうだん','상담·의논'],['残業','ざんぎょう','야근'],['経験','けいけん','경험'],['約束','やくそく','약속']]
+};
+const store={get(){try{return JSON.parse(localStorage.getItem('jpWrong')||'[]')}catch(e){return[]}},set(v){try{localStorage.setItem('jpWrong',JSON.stringify(v))}catch(e){}}};
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let level='N5',mode='meaning',deck=[],idx=0,score=0,wrong=[],locked=false,pool=[];
+const q=o=>({w:o[0],r:o[1],m:o[2]});
+function wc(){const n=store.get().length;$('#wc').textContent=n?'('+n+')':'';$('#myWrong').disabled=!n}
+wc();
+$$('#lv button').forEach(b=>b.onclick=()=>{$$('#lv button').forEach(x=>x.classList.remove('on'));b.classList.add('on');level=b.dataset.l});
+$$('#mode button').forEach(b=>b.onclick=()=>{$$('#mode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.m});
+function panel(id){['home','quiz','done'].forEach(p=>$('#'+p).classList.toggle('hidden',p!==id))}
+function begin(list,p){pool=p||W[level].map(q);deck=sh(list).slice(0,10);idx=0;score=0;wrong=[];panel('quiz');show()}
+function show(){
+  locked=false;const c=deck[idx];
+  $('#qn').textContent=(idx+1)+' / '+deck.length;$('#sc').textContent='맞힘 '+score;$('#bar').style.width=(idx/deck.length*100)+'%';
+  const wd=$('#word');wd.classList.remove('show');
+  if(mode==='meaning'){wd.className='word'+(c.w.length>6?' long':'');wd.innerHTML='<ruby>'+c.w+'<rt>'+c.r+'</rt></ruby>';$('#qt').textContent='이 단어의 뜻은?'}
+  else{wd.className='word long show';wd.textContent=c.m;$('#qt').textContent='알맞은 일본어 단어를 고르세요'}
+  const key=mode==='meaning'?'m':'w';
+  const d=sh(pool.filter(x=>x[key]!==c[key])).slice(0,3).map(x=>x[key]);
+  $('#opts').innerHTML='';
+  sh([c[key],...d]).forEach(t=>{const b=document.createElement('button');b.className='o'+(mode==='word'?' jp':'');b.textContent=t;b.onclick=()=>pick(b,t,c);$('#opts').appendChild(b)});
+  $('#fb').className='fb';$('#fb').innerHTML='&nbsp;';$('#next').disabled=true;
+  $('#next').textContent=idx===deck.length-1?'결과 보기':'다음 문제';
+}
+function pick(b,t,c){
+  if(locked)return;locked=true;const key=mode==='meaning'?'m':'w',ok=t===c[key];
+  $('#word').classList.add('show');
+  $$('#opts .o').forEach(o=>{o.disabled=true;if(o.textContent===c[key])o.classList.add('ok')});
+  const s=store.get();
+  if(ok){score++}else{b.classList.add('no');if(!wrong.includes(c))wrong.push(c);if(!s.some(x=>x[0]===c.w)){s.push([c.w,c.r,c.m]);store.set(s)}}
+  $('#sc').textContent='맞힘 '+score;
+  $('#fb').className='fb show'+(ok?'':' bad');
+  $('#fb').innerHTML=(ok?'정답 · ':'아쉬워요 · ')+'<ruby>'+c.w+'<rt>'+c.r+'</rt></ruby> = '+c.m;
+  $('#next').disabled=false;
+}
+function speak(){const c=deck[idx];if(!c||!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(c.r);u.lang='ja-JP';u.rate=.85;speechSynthesis.speak(u)}
+function finish(){
+  panel('done');const n=deck.length,pct=Math.round(score/n*100);
+  $('#fs').textContent=score;$('#ft').textContent=n;$('#pct').textContent=pct+'%';
+  $('#msg').textContent=wrong.length?'좋아요. 틀린 단어만 한 번 더 봐요.':'완벽해요! 모두 맞혔어요.';
+  $('#wl').innerHTML=wrong.length?'<h4>이번에 틀린 단어</h4>'+wrong.map((c,i)=>'<li style="animation-delay:'+i*.1+'s"><ruby>'+c.w+'<rt>'+c.r+'</rt></ruby><span>'+c.m+'</span></li>').join(''):'';
+  $('#review').disabled=!wrong.length;
+  const v=$('#rv');v.style.strokeDashoffset=326.7;requestAnimationFrame(()=>requestAnimationFrame(()=>v.style.strokeDashoffset=326.7*(1-pct/100)));
+  if(pct>=70&&!reduce){const c=$('#conf2');c.innerHTML='';const cl=['#6a5cff','#12b886','#f59f00','#f0506e','#4cc9f0'];for(let i=0;i<46;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=cl[i%5];p.style.animationDelay=Math.random()*.6+'s';c.appendChild(p)}}
+  wc();
+}
+$('#start').onclick=()=>begin(W[level].map(q));
+$('#myWrong').onclick=()=>{const s=store.get().map(q);if(s.length)begin(s,[...W.N5,...W.N4].map(q))};
+$('#next').onclick=()=>{idx++;idx>=deck.length?finish():show()};
+$('#speak').onclick=speak;
+$('#again').onclick=()=>begin(W[level].map(q));
+$('#review').onclick=()=>{if(wrong.length)begin(wrong.slice(),[...W.N5,...W.N4].map(q))};
+$('#homeBtn').onclick=()=>{panel('home');wc()};
+})();
+</script>
+</body>
+</html>
